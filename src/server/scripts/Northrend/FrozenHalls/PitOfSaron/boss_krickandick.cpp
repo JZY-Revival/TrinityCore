@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
+ * Copyright (C) 2008-2011 TrinityCore <http://www.trinitycore.org/>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -439,7 +439,6 @@ class boss_krick : public CreatureScript
                             _events.ScheduleEvent(EVENT_OUTRO_8, 5000);
                             break;
                         case EVENT_OUTRO_8:
-                            //! HACK: Creature's can't have MOVEMENTFLAG_FLYING
                             me->AddUnitMovementFlag(MOVEMENTFLAG_FLYING);
                             me->GetMotionMaster()->MovePoint(0, outroPos[5]);
                             DoCast(me, SPELL_STRANGULATING);
@@ -454,9 +453,8 @@ class boss_krick : public CreatureScript
                             _events.ScheduleEvent(EVENT_OUTRO_10, 1000);
                             break;
                         case EVENT_OUTRO_10:
-                            //! HACK: Creature's can't have MOVEMENTFLAG_FLYING
                             me->RemoveUnitMovementFlag(MOVEMENTFLAG_FLYING);
-                            me->AddUnitMovementFlag(MOVEMENTFLAG_FALLING_FAR);
+                            me->AddUnitMovementFlag(MOVEMENTFLAG_FALLING);
                             me->GetMotionMaster()->MovePoint(0, outroPos[6]);
                             _events.ScheduleEvent(EVENT_OUTRO_11, 2000);
                             break;

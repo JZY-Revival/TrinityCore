@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
+ * Copyright (C) 2008-2011 TrinityCore <http://www.trinitycore.org/>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -27,7 +27,7 @@ enum Yells
     SAY_PHASE2          = -1658005,
     SAY_PHASE3          = -1658006,
 
-    SAY_TYRANNUS_DEATH  = -1658007,
+    SAY_TYRANNUS_DEATH  = -1659007,
 };
 
 enum Spells

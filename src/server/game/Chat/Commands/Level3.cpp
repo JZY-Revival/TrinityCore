@@ -25,6 +25,7 @@
 #include "ArenaTeamMgr.h"
 #include "GuildMgr.h"
 #include "AuctionHouseMgr.h"
+#include "AuctionHouseBot.h" 
 #include "AccountMgr.h"
 #include "PlayerDump.h"
 #include "SpellMgr.h"

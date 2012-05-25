@@ -115,131 +115,61 @@ public:
 };
 
 /*######
-## npc_squire_david
+## npc_alorah_and_grimmin
 ######*/
 
-enum eSquireDavid
+enum ealorah_and_grimmin
 {
-    QUEST_THE_ASPIRANT_S_CHALLENGE_H                    = 13680,
-    QUEST_THE_ASPIRANT_S_CHALLENGE_A                    = 13679,
-
-    NPC_ARGENT_VALIANT                                  = 33448,
-
-    GOSSIP_TEXTID_SQUIRE                                = 14407
+    SPELL_CHAIN                     = 68341,
+    NPC_FJOLA_LIGHTBANE             = 36065,
+    NPC_EYDIS_DARKBANE              = 36066,
+    NPC_PRIESTESS_ALORAH            = 36101,
+    NPC_PRIEST_GRIMMIN              = 36102
 };
 
-#define GOSSIP_SQUIRE_ITEM_1 "I am ready to fight!"
-#define GOSSIP_SQUIRE_ITEM_2 "How do the Argent Crusader raiders fight?"
-
-class npc_squire_david : public CreatureScript
+class npc_alorah_and_grimmin : public CreatureScript
 {
 public:
-    npc_squire_david() : CreatureScript("npc_squire_david") { }
+    npc_alorah_and_grimmin() : CreatureScript("npc_alorah_and_grimmin") { }
 
-    bool OnGossipHello(Player* player, Creature* creature)
+    struct npc_alorah_and_grimminAI : public ScriptedAI
     {
-        if (player->GetQuestStatus(QUEST_THE_ASPIRANT_S_CHALLENGE_H) == QUEST_STATUS_INCOMPLETE ||
-            player->GetQuestStatus(QUEST_THE_ASPIRANT_S_CHALLENGE_A) == QUEST_STATUS_INCOMPLETE)//We need more info about it.
-        {
-            player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SQUIRE_ITEM_1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
-            player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SQUIRE_ITEM_2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
-        }
+        npc_alorah_and_grimminAI(Creature* creature) : ScriptedAI(creature) {}
 
-        player->SEND_GOSSIP_MENU(GOSSIP_TEXTID_SQUIRE, creature->GetGUID());
-        return true;
-    }
-
-    bool OnGossipSelect(Player* player, Creature* creature, uint32 /*sender*/, uint32 action)
-    {
-        player->PlayerTalkClass->ClearMenus();
-        if (action == GOSSIP_ACTION_INFO_DEF+1)
-        {
-            player->CLOSE_GOSSIP_MENU();
-            creature->SummonCreature(NPC_ARGENT_VALIANT, 8575.451f, 952.472f, 547.554f, 0.38f);
-        }
-        return true;
-    }
-};
-
-/*######
-## npc_argent_valiant
-######*/
-
-enum eArgentValiant
-{
-    SPELL_CHARGE                = 63010,
-    SPELL_SHIELD_BREAKER        = 65147,
-
-    NPC_ARGENT_VALIANT_CREDIT   = 24108
-};
-
-class npc_argent_valiant : public CreatureScript
-{
-public:
-    npc_argent_valiant() : CreatureScript("npc_argent_valiant") { }
-
-    struct npc_argent_valiantAI : public ScriptedAI
-    {
-        npc_argent_valiantAI(Creature* creature) : ScriptedAI(creature)
-        {
-            creature->GetMotionMaster()->MovePoint(0, 8599.258f, 963.951f, 547.553f);
-            creature->setFaction(35); //wrong faction in db?
-        }
-
-        uint32 uiChargeTimer;
-        uint32 uiShieldBreakerTimer;
+        bool uiCast;
 
         void Reset()
         {
-            uiChargeTimer = 7000;
-            uiShieldBreakerTimer = 10000;
+            uiCast = false;
         }
 
-        void MovementInform(uint32 uiType, uint32 /*uiId*/)
+        void UpdateAI(const uint32 /*uiDiff*/)
         {
-            if (uiType != POINT_MOTION_TYPE)
+            if (uiCast)
                 return;
+            uiCast = true;
+            Creature* target = NULL;
 
-            me->setFaction(14);
-        }
-
-        void DamageTaken(Unit* pDoneBy, uint32& uiDamage)
-        {
-            if (uiDamage > me->GetHealth() && pDoneBy->GetTypeId() == TYPEID_PLAYER)
+            switch(me->GetEntry())
             {
-                uiDamage = 0;
-                CAST_PLR(pDoneBy)->KilledMonsterCredit(NPC_ARGENT_VALIANT_CREDIT, 0);
-                me->setFaction(35);
-                me->DespawnOrUnsummon(5000);
-                me->SetHomePosition(me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), me->GetOrientation());
-                EnterEvadeMode();
+                case NPC_PRIESTESS_ALORAH:
+                    target = me->FindNearestCreature(NPC_EYDIS_DARKBANE, 10.0f);
+                    break;
+                case NPC_PRIEST_GRIMMIN:
+                    target = me->FindNearestCreature(NPC_FJOLA_LIGHTBANE, 10.0f);
+                    break;
             }
-        }
+            if (target)
+                DoCast(target, SPELL_CHAIN);
 
-        void UpdateAI(const uint32 uiDiff)
-        {
             if (!UpdateVictim())
                 return;
-
-            if (uiChargeTimer <= uiDiff)
-            {
-                DoCastVictim(SPELL_CHARGE);
-                uiChargeTimer = 7000;
-            } else uiChargeTimer -= uiDiff;
-
-            if (uiShieldBreakerTimer <= uiDiff)
-            {
-                DoCastVictim(SPELL_SHIELD_BREAKER);
-                uiShieldBreakerTimer = 10000;
-            } else uiShieldBreakerTimer -= uiDiff;
-
-            DoMeleeAttackIfReady();
         }
     };
 
-    CreatureAI* GetAI(Creature* creature) const
+    CreatureAI *GetAI(Creature* creature) const
     {
-        return new npc_argent_valiantAI(creature);
+        return new npc_alorah_and_grimminAI(creature);
     }
 };
 
@@ -494,8 +424,7 @@ class npc_tournament_training_dummy : public CreatureScript
 void AddSC_icecrown()
 {
     new npc_arete;
-    new npc_squire_david;
-    new npc_argent_valiant;
+    new npc_alorah_and_grimmin;
     new npc_guardian_pavilion;
     new npc_vereth_the_cunning;
     new npc_tournament_training_dummy;

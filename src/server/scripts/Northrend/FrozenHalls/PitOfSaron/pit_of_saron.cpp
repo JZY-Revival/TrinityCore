@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
+ * Copyright (C) 2008-2011 TrinityCore <http://www.trinitycore.org/>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -240,13 +240,12 @@ class mob_geist_ambusher : public CreatureScript
                 _leapingFaceMaulCooldown = 9000;
             }
 
-            void EnterCombat(Unit* who)
+            void MoveInLineOfSight(Unit* who)
             {
                 if (who->GetTypeId() != TYPEID_PLAYER)
                     return;
 
-                // the max range is determined by aggro range
-                if (me->GetDistance(who) > 5.0f)
+                if (me->IsWithinDistInMap(who, 30.0f))
                     DoCast(who, SPELL_LEAPING_FACE_MAUL);
             }
 
@@ -290,7 +289,7 @@ class spell_trash_mob_glacial_strike : public SpellScriptLoader
             {
                 if (GetTarget()->IsFullHealth())
                 {
-                    GetTarget()->RemoveAura(GetId(), 0, 0, AURA_REMOVE_BY_ENEMY_SPELL);
+                    GetTarget()->RemoveAura(GetId(), AURA_REMOVE_BY_ENEMY_SPELL);
                     PreventDefaultAction();
                 }
             }

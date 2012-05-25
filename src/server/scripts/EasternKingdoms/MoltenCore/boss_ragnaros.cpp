@@ -153,6 +153,7 @@ class boss_ragnaros : public CreatureScript
                         case EVENT_INTRO_5:
                             me->SetReactState(REACT_AGGRESSIVE);
                             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
                             _introState = 2;
                             break;
                         default:

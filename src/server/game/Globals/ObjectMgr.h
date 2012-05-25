@@ -807,6 +807,11 @@ class ObjectMgr
         {
             return &_goQuestRelations;
         }
+        
+        QuestRelations* GetCreatureQuestInvolvedRelation()
+        {
+            return &_creatureQuestInvolvedRelations;
+        }
 
         QuestRelationBounds GetGOQuestRelationBounds(uint32 go_entry)
         {

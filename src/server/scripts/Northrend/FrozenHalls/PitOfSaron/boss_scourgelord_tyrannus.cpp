@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
+ * Copyright (C) 2008-2011 TrinityCore <http://www.trinitycore.org/>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -387,7 +387,8 @@ class player_overlord_brandAI : public PlayerAI
         void SetGUID(uint64 guid, int32 /*type*/)
         {
             tyrannus = ObjectAccessor::GetCreature(*me, guid);
-            me->IsAIEnabled = tyrannus != NULL;
+            if (!tyrannus)
+                me->IsAIEnabled = false;
         }
 
         void DamageDealt(Unit* /*victim*/, uint32& damage, DamageEffectType /*damageType*/)
@@ -422,9 +423,10 @@ class spell_tyrannus_overlord_brand : public SpellScriptLoader
                     return;
 
                 oldAI = GetTarget()->GetAI();
-                oldAIState = GetTarget()->IsAIEnabled;
                 GetTarget()->SetAI(new player_overlord_brandAI(GetTarget()->ToPlayer()));
                 GetTarget()->GetAI()->SetGUID(GetCasterGUID());
+                oldAIState = GetTarget()->IsAIEnabled;
+                GetTarget()->IsAIEnabled = true;
             }
 
             void OnRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)

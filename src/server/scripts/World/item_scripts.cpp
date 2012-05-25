@@ -80,6 +80,45 @@ public:
 };
 
 /*#####
+# item_draenei_fishing_net
+#####*/
+
+class item_draenei_fishing_net : public ItemScript
+{
+public:
+    item_draenei_fishing_net() : ItemScript("item_draenei_fishing_net") { }
+
+    //This is just a hack and should be removed from here.
+    //Creature/Item are in fact created before spell are sucessfully casted, without any checks at all to ensure proper/expected behavior.
+    bool OnUse(Player* player, Item* /*pItem*/, SpellCastTargets const& /*targets*/)
+    {
+        if (player->GetQuestStatus(9452) == QUEST_STATUS_INCOMPLETE)
+        {
+            if (urand(0, 99) < 35)
+            {
+                Creature* Murloc = player->SummonCreature(17102, player->GetPositionX(), player->GetPositionY()+20, player->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 10000);
+                if (Murloc)
+                    Murloc->AI()->AttackStart(player);
+            }
+            else
+            {
+                ItemPosCountVec dest;
+                uint32 itemId = 23614;
+                InventoryResult msg = player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, itemId, 1);
+                if (msg == EQUIP_ERR_OK)
+                {
+                    if (Item* item = player->StoreNewItem(dest, itemId, true))
+                        player->SendNewItem(item, 1, false, true);
+                }
+                else
+                    player->SendEquipError(msg, NULL, NULL, itemId);
+            }
+        }
+        return false;
+    }
+};
+
+/*#####
 # item_nether_wraith_beacon
 #####*/
 
@@ -423,4 +462,5 @@ void AddSC_item_scripts()
     new item_dehta_trap_smasher();
     new item_trident_of_nazjan();
     new item_captured_frog();
+    new item_draenei_fishing_net();
 }

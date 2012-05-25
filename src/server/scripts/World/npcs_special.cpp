@@ -2530,6 +2530,185 @@ public:
 };
 
 /*######
+## npc_tabard_vendor
+######*/
+
+enum
+{
+    QUEST_TRUE_MASTERS_OF_LIGHT = 9737,
+    QUEST_THE_UNWRITTEN_PROPHECY = 9762,
+    QUEST_INTO_THE_BREACH = 10259,
+    QUEST_BATTLE_OF_THE_CRIMSON_WATCH = 10781,
+    QUEST_SHARDS_OF_AHUNE = 11972,
+
+    ACHIEVEMENT_EXPLORE_NORTHREND = 45,
+    ACHIEVEMENT_TWENTYFIVE_TABARDS = 1021,
+    ACHIEVEMENT_THE_LOREMASTER_A = 1681,
+    ACHIEVEMENT_THE_LOREMASTER_H = 1682,
+
+    ITEM_TABARD_OF_THE_HAND = 24344,
+    ITEM_TABARD_OF_THE_BLOOD_KNIGHT = 25549,
+    ITEM_TABARD_OF_THE_PROTECTOR = 28788,
+    ITEM_OFFERING_OF_THE_SHATAR = 31408,
+    ITEM_GREEN_TROPHY_TABARD_OF_THE_ILLIDARI = 31404,
+    ITEM_PURPLE_TROPHY_TABARD_OF_THE_ILLIDARI = 31405,
+    ITEM_TABARD_OF_THE_SUMMER_SKIES = 35279,
+    ITEM_TABARD_OF_THE_SUMMER_FLAMES = 35280,
+    ITEM_TABARD_OF_THE_ACHIEVER = 40643,
+    ITEM_LOREMASTERS_COLORS = 43300,
+    ITEM_TABARD_OF_THE_EXPLORER = 43348,
+
+    SPELL_TABARD_OF_THE_BLOOD_KNIGHT = 54974,
+    SPELL_TABARD_OF_THE_HAND = 54976,
+    SPELL_GREEN_TROPHY_TABARD_OF_THE_ILLIDARI = 54977,
+    SPELL_PURPLE_TROPHY_TABARD_OF_THE_ILLIDARI = 54982,
+    SPELL_TABARD_OF_THE_ACHIEVER = 55006,
+    SPELL_TABARD_OF_THE_PROTECTOR = 55008,
+    SPELL_LOREMASTERS_COLORS = 58194,
+    SPELL_TABARD_OF_THE_EXPLORER = 58224,
+    SPELL_TABARD_OF_SUMMER_SKIES = 62768,
+    SPELL_TABARD_OF_SUMMER_FLAMES = 62769
+};
+
+#define GOSSIP_LOST_TABARD_OF_BLOOD_KNIGHT "I've lost my Tabard of Blood Knight."
+#define GOSSIP_LOST_TABARD_OF_THE_HAND "I've lost my Tabard of the Hand."
+#define GOSSIP_LOST_TABARD_OF_THE_PROTECTOR "I've lost my Tabard of the Protector."
+#define GOSSIP_LOST_GREEN_TROPHY_TABARD_OF_THE_ILLIDARI "I've lost my Green Trophy Tabard of the Illidari."
+#define GOSSIP_LOST_PURPLE_TROPHY_TABARD_OF_THE_ILLIDARI "I've lost my Purple Trophy Tabard of the Illidari."
+#define GOSSIP_LOST_TABARD_OF_SUMMER_SKIES "I've lost my Tabard of Summer Skies."
+#define GOSSIP_LOST_TABARD_OF_SUMMER_FLAMES "I've lost my Tabard of Summer Flames."
+#define GOSSIP_LOST_LOREMASTERS_COLORS "I've lost my Loremaster's Colors."
+#define GOSSIP_LOST_TABARD_OF_THE_EXPLORER "I've lost my Tabard of the Explorer."
+#define GOSSIP_LOST_TABARD_OF_THE_ACHIEVER "I've lost my Tabard of the Achiever."
+
+class npc_tabard_vendor : public CreatureScript
+{
+public:
+    npc_tabard_vendor() : CreatureScript("npc_tabard_vendor") { }
+
+    bool OnGossipHello(Player* player, Creature* creature)
+    {
+        bool lostBloodKnight = false;
+        bool lostHand = false;
+        bool lostProtector = false;
+        bool lostIllidari = false;
+        bool lostSummer = false;
+        bool lostExplorer = false;
+
+        // Tabard of the Blood Knight
+        if (player->GetQuestRewardStatus(QUEST_TRUE_MASTERS_OF_LIGHT) && !player->HasItemCount(ITEM_TABARD_OF_THE_BLOOD_KNIGHT, 1, true))
+            lostBloodKnight = true;
+
+        // Tabard of the Hand
+        if (player->GetQuestRewardStatus(QUEST_THE_UNWRITTEN_PROPHECY) && !player->HasItemCount(ITEM_TABARD_OF_THE_HAND, 1, true))
+            lostHand = true;
+
+        // Tabard of the Protector
+        if (player->GetQuestRewardStatus(QUEST_INTO_THE_BREACH) && !player->HasItemCount(ITEM_TABARD_OF_THE_PROTECTOR, 1, true))
+            lostProtector = true;
+
+        // Green Trophy Tabard of the Illidari
+        // Purple Trophy Tabard of the Illidari
+        if (player->GetQuestRewardStatus(QUEST_BATTLE_OF_THE_CRIMSON_WATCH) &&
+            (!player->HasItemCount(ITEM_GREEN_TROPHY_TABARD_OF_THE_ILLIDARI, 1, true) &&
+            !player->HasItemCount(ITEM_PURPLE_TROPHY_TABARD_OF_THE_ILLIDARI, 1, true) &&
+            !player->HasItemCount(ITEM_OFFERING_OF_THE_SHATAR, 1, true)))
+            lostIllidari = true;
+
+        // Tabard of Summer Skies
+        // Tabard of Summer Flames
+        if (player->GetQuestRewardStatus(QUEST_SHARDS_OF_AHUNE) &&
+            !player->HasItemCount(ITEM_TABARD_OF_THE_SUMMER_SKIES, 1, true) &&
+            !player->HasItemCount(ITEM_TABARD_OF_THE_SUMMER_FLAMES, 1, true))
+            lostSummer = true;
+
+        if (player->HasAchieved(ACHIEVEMENT_EXPLORE_NORTHREND) &&
+            !player->HasItemCount(ITEM_TABARD_OF_THE_EXPLORER, 1, true))
+            lostExplorer = true;
+
+        if (lostBloodKnight || lostHand || lostProtector || lostIllidari || lostSummer || lostExplorer)
+        {
+            player->ADD_GOSSIP_ITEM(GOSSIP_ICON_VENDOR, GOSSIP_TEXT_BROWSE_GOODS, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_TRADE);
+
+            if (lostBloodKnight)
+                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_LOST_TABARD_OF_BLOOD_KNIGHT, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+
+            if (lostHand)
+                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_LOST_TABARD_OF_THE_HAND, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
+
+            if (lostProtector)
+                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_LOST_TABARD_OF_THE_PROTECTOR, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
+
+            if (lostIllidari)
+            {
+                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_LOST_GREEN_TROPHY_TABARD_OF_THE_ILLIDARI, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4);
+                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_LOST_PURPLE_TROPHY_TABARD_OF_THE_ILLIDARI, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5);
+            }
+
+            if (lostSummer)
+            {
+                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_LOST_TABARD_OF_SUMMER_SKIES, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 6);
+                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_LOST_TABARD_OF_SUMMER_FLAMES, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 7);
+            }
+
+            if (lostExplorer)
+                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_LOST_TABARD_OF_THE_EXPLORER, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 8);
+
+            player->SEND_GOSSIP_MENU(player->GetGossipTextId(creature), creature->GetGUID());
+        }
+        else
+            player->GetSession()->SendListInventory(creature->GetGUID());
+
+        return true;
+    }
+
+    bool OnGossipSelect(Player* player, Creature* creature, uint32 /*sender*/, uint32 action)
+    {
+        player->PlayerTalkClass->ClearMenus();
+
+        switch (action)
+        {
+            case GOSSIP_ACTION_TRADE:
+                player->GetSession()->SendListInventory(creature->GetGUID());
+                break;
+            case GOSSIP_ACTION_INFO_DEF + 1:
+                player->CLOSE_GOSSIP_MENU();
+                player->CastSpell(player, SPELL_TABARD_OF_THE_BLOOD_KNIGHT, false);
+                break;
+            case GOSSIP_ACTION_INFO_DEF + 2:
+                player->CLOSE_GOSSIP_MENU();
+                player->CastSpell(player, SPELL_TABARD_OF_THE_HAND, false);
+                break;
+            case GOSSIP_ACTION_INFO_DEF + 3:
+                player->CLOSE_GOSSIP_MENU();
+                player->CastSpell(player, SPELL_TABARD_OF_THE_PROTECTOR, false);
+                break;
+            case GOSSIP_ACTION_INFO_DEF + 4:
+                player->CLOSE_GOSSIP_MENU();
+                player->CastSpell(player, SPELL_GREEN_TROPHY_TABARD_OF_THE_ILLIDARI, false);
+                break;
+            case GOSSIP_ACTION_INFO_DEF + 5:
+                player->CLOSE_GOSSIP_MENU();
+                player->CastSpell(player, SPELL_PURPLE_TROPHY_TABARD_OF_THE_ILLIDARI, false);
+                break;
+            case GOSSIP_ACTION_INFO_DEF + 6:
+                player->CLOSE_GOSSIP_MENU();
+                player->CastSpell(player, SPELL_TABARD_OF_SUMMER_SKIES, false);
+                break;
+            case GOSSIP_ACTION_INFO_DEF + 7:
+                player->CLOSE_GOSSIP_MENU();
+                player->CastSpell(player, SPELL_TABARD_OF_SUMMER_FLAMES, false);
+                break;
+            case GOSSIP_ACTION_INFO_DEF + 8:
+                player->CLOSE_GOSSIP_MENU();
+                player->CastSpell(player, SPELL_TABARD_OF_THE_EXPLORER, false);
+                break;
+        }
+        return true;
+    }
+};
+
+/*######
 ## npc_experience
 ######*/
 
@@ -2965,6 +3144,543 @@ public:
     };
 };
 
+/*######
+## npc_torch_tossing_bunny
+######*/
+
+enum
+{
+    SPELL_TORCH_TOSSING_COMPLETE_A = 45719,
+    SPELL_TORCH_TOSSING_COMPLETE_H = 46651,
+    SPELL_TORCH_TOSSING_TRAINING   = 45716,
+    SPELL_TORCH_TOSSING_PRACTICE   = 46630,
+    SPELL_TORCH_TOSS               = 46054,
+    SPELL_TARGET_INDICATOR         = 45723,
+    SPELL_BRAZIERS_HIT             = 45724
+};
+
+class npc_torch_tossing_bunny : public CreatureScript
+{
+    public:
+        npc_torch_tossing_bunny() : CreatureScript("npc_torch_tossing_bunny") { }
+
+        struct npc_torch_tossing_bunnyAI : public ScriptedAI
+        {
+            npc_torch_tossing_bunnyAI(Creature* creature) : ScriptedAI(creature) { }
+
+            void Reset()
+            {
+                _targetTimer = urand(5000, 20000);
+                _validTarget = false;
+            }
+
+            void SpellHit(Unit* caster, SpellInfo const* spell)
+            {
+                if (spell->Id == SPELL_TORCH_TOSS && _validTarget)
+                {
+                    uint8 neededHits;
+
+                    if (caster->HasAura(SPELL_TORCH_TOSSING_TRAINING))
+                        neededHits = 8;
+                    else if (caster->HasAura(SPELL_TORCH_TOSSING_PRACTICE))
+                        neededHits = 20;
+                    else
+                        return;
+
+                    DoCast(me, SPELL_BRAZIERS_HIT, true);
+                    caster->AddAura(SPELL_BRAZIERS_HIT, caster);
+
+                    if (caster->GetAuraCount(SPELL_BRAZIERS_HIT) >= neededHits)
+                    {
+                        // complete quest
+                        caster->CastSpell(caster, SPELL_TORCH_TOSSING_COMPLETE_A, true);
+                        caster->CastSpell(caster, SPELL_TORCH_TOSSING_COMPLETE_H, true);
+                        caster->RemoveAurasDueToSpell(SPELL_BRAZIERS_HIT);
+                        caster->RemoveAurasDueToSpell(neededHits == 8 ? SPELL_TORCH_TOSSING_TRAINING : SPELL_TORCH_TOSSING_PRACTICE);
+                    }
+                }
+            }
+
+            void UpdateAI(uint32 const diff)
+            {
+                if (_targetTimer <= diff)
+                {
+                    if (!_validTarget)
+                    {
+                        _validTarget = true;
+                        DoCast(SPELL_TARGET_INDICATOR);
+                        _targetTimer = 5000;
+                    }
+                    else
+                    {
+                        _validTarget = false;
+                        _targetTimer = urand(5000, 15000);
+                    }
+                }
+                else
+                    _targetTimer -= diff;
+            }
+
+        private:
+            uint32 _targetTimer;
+            bool _validTarget;
+        };
+
+        CreatureAI* GetAI(Creature* creature) const
+        {
+            return new npc_torch_tossing_bunnyAI(creature);
+        }
+};
+
+/*######
+## Brewfest
+######*/
+
+enum Brewfest
+{
+    SPELL_APPLE_TRAP             = 43450,
+    SPELL_RACING_RAM             = 42146,
+    SPELL_RAM_FATIGUE            = 43052,
+    SPELL_CREATE_KEG             = 42414,
+    SPELL_HAS_KEG                = 44066,
+    SPELL_THROW_KEG              = 43660,
+    SPELL_THROW_KEG_PLAYER       = 43662,
+    SPELL_WORKING_FOR_THE_MAN    = 43534,
+    SPELL_RELAY_RACE_DEBUFF      = 44689,
+    SPELL_RENTAL_RACING_RAM      = 43883,
+    SPELL_CREATE_TICKETS         = 44501,
+
+    QUEST_THERE_AND_BACK_AGAIN_A = 11122,
+    QUEST_THERE_AND_BACK_AGAIN_H = 11412,
+    QUEST_BARK_FOR_THE_1         = 11293,
+    QUEST_BARK_FOR_THE_2         = 11294,
+    QUEST_BARK_FOR_THE_3         = 11407,
+    QUEST_BARK_FOR_THE_4         = 11408,
+
+    ITEM_PORTABLE_BREWFEST_KEG   = 33797,
+
+    NPC_DELIVERY_CREDIT          = 24337, // TODO: use spell
+    NPC_FLYNN_FIREBREW           = 24364,
+    NPC_BOK_DROPCERTAIN          = 24527,
+    NPC_RAM_MASTER_RAY           = 24497,
+    NPC_NEILL_RAMSTEIN           = 23558,
+
+    ACHIEV_BREW_OF_THE_MONTH     = 2796
+};
+
+class npc_apple_trap_bunny : public CreatureScript
+{
+    public:
+        npc_apple_trap_bunny() : CreatureScript("npc_apple_trap_bunny") { }
+
+        struct npc_apple_trap_bunnyAI : public ScriptedAI
+        {
+            npc_apple_trap_bunnyAI(Creature* creature) : ScriptedAI(creature) { }
+
+            void MoveInLineOfSight(Unit* who)
+            {
+                if (who && who->ToPlayer() && who->HasAura(SPELL_RACING_RAM) && !who->HasAura(SPELL_APPLE_TRAP) && me->GetDistance(who) < 9.0f)
+                {
+                    who->RemoveAurasDueToSpell(SPELL_RAM_FATIGUE);
+                    who->CastSpell(who, SPELL_APPLE_TRAP, true);
+                }
+            }
+        };
+
+        CreatureAI* GetAI(Creature* creature) const
+        {
+            return new npc_apple_trap_bunnyAI(creature);
+        }
+};
+
+class npc_keg_delivery : public CreatureScript
+{
+    public:
+        npc_keg_delivery() : CreatureScript("npc_keg_delivery") { }
+
+        bool OnGossipHello(Player* player, Creature* creature)
+        {
+            if (creature->isQuestGiver())
+                player->PrepareQuestMenu(creature->GetGUID());
+
+            if ((player->GetQuestRewardStatus(QUEST_THERE_AND_BACK_AGAIN_A) ||
+                player->GetQuestRewardStatus(QUEST_THERE_AND_BACK_AGAIN_H)) && !player->HasAura(SPELL_RELAY_RACE_DEBUFF))
+                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Gibt es noch mehr zu tun?", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+
+            player->SEND_GOSSIP_MENU(player->GetGossipTextId(creature), creature->GetGUID());
+            return true;
+        }
+
+        bool OnGossipSelect(Player* player, Creature* creature, uint32 /*sender*/, uint32 action)
+        {
+            player->PlayerTalkClass->ClearMenus();
+
+            if (action == GOSSIP_ACTION_INFO_DEF + 1)
+            {
+                player->CastSpell(player, SPELL_RENTAL_RACING_RAM, true);
+                player->CastSpell(player, SPELL_WORKING_FOR_THE_MAN, true);
+                creature->AddAura(SPELL_RELAY_RACE_DEBUFF, player);
+                player->CLOSE_GOSSIP_MENU();
+            }
+
+            return true;
+        }
+
+        struct npc_keg_deliveryAI : public ScriptedAI
+        {
+            npc_keg_deliveryAI(Creature* creature) : ScriptedAI(creature) { }
+
+            void MoveInLineOfSight(Unit* who)
+            {
+                if (who && who->ToPlayer() && who->HasAura(SPELL_RACING_RAM) && me->GetDistance(who) < 15.0f &&
+                   (who->ToPlayer()->GetQuestStatus(QUEST_THERE_AND_BACK_AGAIN_A) == QUEST_STATUS_INCOMPLETE ||
+                    who->ToPlayer()->GetQuestStatus(QUEST_THERE_AND_BACK_AGAIN_H) == QUEST_STATUS_INCOMPLETE ||
+                    who->HasAura(SPELL_WORKING_FOR_THE_MAN)))
+                {
+                    switch (me->GetEntry())
+                    {
+                        case NPC_FLYNN_FIREBREW:
+                        case NPC_BOK_DROPCERTAIN:
+                            if (!who->HasAura(SPELL_HAS_KEG))
+                            {
+                                me->CastSpell(who, SPELL_CREATE_KEG, true);
+                                me->CastSpell(who, SPELL_THROW_KEG, true); // visual
+                            }
+                            break;
+                        case NPC_RAM_MASTER_RAY:
+                        case NPC_NEILL_RAMSTEIN:
+                            if (who->HasAura(SPELL_HAS_KEG))
+                            {
+                                who->CastSpell(me, SPELL_THROW_KEG_PLAYER, true);
+                                who->ToPlayer()->DestroyItemCount(ITEM_PORTABLE_BREWFEST_KEG, 1, true);
+
+                                // rewards
+                                if (!who->HasAura(SPELL_WORKING_FOR_THE_MAN))
+                                    who->ToPlayer()->KilledMonsterCredit(NPC_DELIVERY_CREDIT, 0);
+                                else
+                                {
+                                    // give 2 tickets
+                                    who->CastSpell(who, SPELL_CREATE_TICKETS, true);
+
+                                    // plus 30s ram duration
+                                    if (Aura* aura = who->GetAura(SPELL_RENTAL_RACING_RAM))
+                                        aura->SetDuration(aura->GetDuration() + 30*IN_MILLISECONDS);
+                                }
+                            }
+                            break;
+                    }
+                }
+            }
+        };
+
+        CreatureAI* GetAI(Creature* creature) const
+        {
+            return new npc_keg_deliveryAI(creature);
+        }
+};
+
+class npc_bark_bunny : public CreatureScript
+{
+    public:
+        npc_bark_bunny() : CreatureScript("npc_bark_bunny") { }
+
+        struct npc_bark_bunnyAI : public ScriptedAI
+        {
+            npc_bark_bunnyAI(Creature* creature) : ScriptedAI(creature) { }
+
+            void MoveInLineOfSight(Unit* who)
+            {
+                if (who && who->ToPlayer() && who->HasAura(SPELL_RACING_RAM) && me->GetDistance(who) < 20.0f &&
+                   (who->ToPlayer()->GetQuestStatus(QUEST_BARK_FOR_THE_1) == QUEST_STATUS_INCOMPLETE ||
+                    who->ToPlayer()->GetQuestStatus(QUEST_BARK_FOR_THE_2) == QUEST_STATUS_INCOMPLETE ||
+                    who->ToPlayer()->GetQuestStatus(QUEST_BARK_FOR_THE_3) == QUEST_STATUS_INCOMPLETE ||
+                    who->ToPlayer()->GetQuestStatus(QUEST_BARK_FOR_THE_4) == QUEST_STATUS_INCOMPLETE))
+                {
+                    who->ToPlayer()->KilledMonsterCredit(me->GetEntry(), 0);
+                }
+            }
+        };
+
+        CreatureAI* GetAI(Creature* creature) const
+        {
+            return new npc_bark_bunnyAI(creature);
+        }
+};
+
+class npc_brew_vendor : public CreatureScript
+{
+    public:
+        npc_brew_vendor() : CreatureScript("npc_brew_vendor") { }
+
+        bool OnGossipHello(Player* player, Creature* creature)
+        {
+            if (player->HasAchieved(ACHIEV_BREW_OF_THE_MONTH))
+                player->GetSession()->SendListInventory(creature->GetGUID());
+            else
+                player->SEND_GOSSIP_MENU(player->GetGossipTextId(creature), creature->GetGUID());
+
+            return true;
+        }
+};
+
+enum DarkIronAttack
+{
+    GO_FESTIVE_KEG             = 186183, // .. 186187
+    GO_MOLE_MACHINE_WRECKAGE_A = 189989,
+    GO_MOLE_MACHINE_WRECKAGE_H = 189990,
+
+    NPC_DARK_IRON_GUZZLER      = 23709,
+    NPC_DARK_IRON_HERALD       = 24536,
+
+    SPELL_BREWFEST_STUN        = 42435,
+    SPELL_MOLE_MACHINE_SPAWN   = 43563
+};
+
+class npc_dark_iron_herald : public CreatureScript
+{
+    public:
+        npc_dark_iron_herald() : CreatureScript("npc_dark_iron_herald") { }
+
+        struct npc_dark_iron_heraldAI : public ScriptedAI
+        {
+            npc_dark_iron_heraldAI(Creature* creature) : ScriptedAI(creature), _summons(me)
+            {
+                me->setActive(true);
+                if (me->isDead())
+                    me->Respawn();
+            }
+
+            void Reset()
+            {
+                _eventTimer = 5*MINUTE*IN_MILLISECONDS;
+                _spawnTimer = 15*IN_MILLISECONDS;
+            }
+
+            void ResetKegs()
+            {
+                for (uint32 i = GO_FESTIVE_KEG; i < GO_FESTIVE_KEG+5; ++i)
+                {
+                    GameObject* keg = me->FindNearestGameObject(i, 100.0f);
+                    if (keg && keg->GetGoState() == GO_STATE_ACTIVE)
+                        keg->SetGoState(GO_STATE_READY);
+                }
+            }
+
+            GameObject* GetKeg() const
+            {
+                std::list<GameObject*> tempList;
+
+                // get all valid near kegs
+                for (uint32 i = GO_FESTIVE_KEG; i < GO_FESTIVE_KEG+5; ++i)
+                {
+                    GameObject* keg = me->FindNearestGameObject(i, 100.0f);
+                    if (keg && keg->GetGoState() != GO_STATE_ACTIVE)
+                        tempList.push_back(keg);
+                }
+
+                // select a random one
+                if (!tempList.empty())
+                {
+                    std::list<GameObject*>::iterator itr = tempList.begin();
+                    std::advance(itr, urand(0, tempList.size() - 1));
+                    if (GameObject* keg = *itr)
+                        return keg;
+                }
+
+                return NULL;
+            }
+
+            void JustSummoned(Creature* summon)
+            {
+                _summons.Summon(summon);
+            }
+
+            void UpdateAI(uint32 const diff)
+            {
+                if (_eventTimer <= diff)
+                {
+                    float x, y, z;
+                    me->GetPosition(x, y, z);
+                    uint32 area = me->GetAreaId();
+                    me->SummonGameObject((area == 1) ? GO_MOLE_MACHINE_WRECKAGE_A : GO_MOLE_MACHINE_WRECKAGE_H, x, y, z, 0, 0, 0, 0, 0, 90);
+
+                    _summons.DespawnAll();
+                    ResetKegs();
+                    me->DisappearAndDie();
+                    return;
+                }
+                else
+                    _eventTimer -= diff;
+
+                if (_spawnTimer <= diff)
+                {
+                    Position spawn;
+                    me->GetRandomNearPosition(spawn, 20.0f);
+
+                    if (Creature* guzzler = me->SummonCreature(NPC_DARK_IRON_GUZZLER, spawn))
+                    {
+                        guzzler->SetReactState(REACT_PASSIVE);
+                        guzzler->SetWalk(true);
+                        guzzler->CastSpell(guzzler, SPELL_MOLE_MACHINE_SPAWN, true);
+                        guzzler->SetVisible(false);
+
+                        if (GameObject* keg = GetKeg())
+                        {
+                            Position pos;
+                            keg->GetNearPosition(pos, 3.0f, keg->GetAngle(me->GetPositionX(), me->GetPositionZ()) - float(M_PI*rand_norm()));
+                            guzzler->GetMotionMaster()->MovePoint(1, pos);
+                            guzzler->AI()->SetGUID(keg->GetGUID());
+                        }
+                        else
+                        {
+                            _summons.DespawnAll();
+                            ResetKegs();
+                            me->DisappearAndDie();
+                        }
+                    }
+                    _spawnTimer = urand(1, 4)*IN_MILLISECONDS;
+                }
+                else
+                    _spawnTimer -= diff;
+            }
+
+        private:
+            SummonList _summons;
+            uint32 _eventTimer;
+            uint32 _spawnTimer;
+        };
+
+        CreatureAI* GetAI(Creature* creature) const
+        {
+            return new npc_dark_iron_heraldAI(creature);
+        }
+};
+
+class npc_dark_iron_guzzler : public CreatureScript
+{
+    public:
+        npc_dark_iron_guzzler() : CreatureScript("npc_dark_iron_guzzler") { }
+
+        struct npc_dark_iron_guzzlerAI : public ScriptedAI
+        {
+            npc_dark_iron_guzzlerAI(Creature* creature) : ScriptedAI(creature) { }
+
+            void Reset()
+            {
+                _kegGUID = 0;
+                _waitTimer = 2*IN_MILLISECONDS;
+                _destroyTimer = 20*IN_MILLISECONDS;
+                _kegReached = false;
+                _waiting = true;
+                me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_ATTACKABLE_1);
+            }
+
+            void SpellHit(Unit* /*caster*/, SpellInfo const* spell)
+            {
+                if (spell->Id == SPELL_BREWFEST_STUN)
+                {
+                    me->GetMotionMaster()->Clear();
+                    me->Kill(me);
+                    me->DespawnOrUnsummon(10*IN_MILLISECONDS);
+                    _kegReached = false;
+                }
+            }
+
+            void SetGUID(uint64 guid, int32 /*id*/ = 0)
+            {
+                _kegGUID = guid;
+            }
+
+            void MovementInform(uint32 type, uint32 id)
+            {
+                if (type != POINT_MOTION_TYPE)
+                    return;
+
+                if (GameObject* keg = ObjectAccessor::GetGameObject(*me, _kegGUID))
+                {
+                    _kegReached = true;
+                    me->SetFacingToObject(keg);
+                    me->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_ONESHOT_ATTACK2H_LOOSE);
+                }
+                else
+                    me->DespawnOrUnsummon();
+            }
+
+            void UpdateAI(uint32 const diff)
+            {
+                if (_waiting)
+                {
+                    if (_waitTimer <= diff)
+                    {
+                        _waiting = false;
+                        me->SetVisible(true);
+                    }
+                    else
+                        _waitTimer -= diff;
+                }
+
+                if (_kegReached)
+                {
+                    GameObject* keg = ObjectAccessor::GetGameObject(*me, _kegGUID);
+                    if (!keg || (keg && keg->GetGoState() == GO_STATE_ACTIVE))
+                    {
+                        me->DespawnOrUnsummon();
+                        _kegReached = false;
+                        return;
+                    }
+
+                    if (_destroyTimer <= diff)
+                    {
+                        keg->SetGoState(GO_STATE_ACTIVE);
+                        me->DespawnOrUnsummon();
+                        _kegReached = false;
+                    }
+                    else
+                        _destroyTimer -= diff;
+                }
+            }
+
+        private:
+            uint64 _kegGUID;
+            uint32 _destroyTimer;
+            uint32 _waitTimer;
+            bool _kegReached;
+            bool _waiting;
+        };
+
+        CreatureAI* GetAI(Creature* creature) const
+        {
+            return new npc_dark_iron_guzzlerAI(creature);
+        }
+};
+
+enum WildTurkey
+{
+    SPELL_TURKEY_TRACKER = 62014
+};
+
+class npc_wild_turkey : public CreatureScript
+{
+    public:
+        npc_wild_turkey() : CreatureScript("npc_wild_turkey") { }
+
+        struct npc_wild_turkeyAI : public CritterAI
+        {
+            npc_wild_turkeyAI(Creature* creature) : CritterAI(creature) { }
+
+            void JustDied(Unit* killer)
+            {
+                if (killer && killer->GetTypeId() == TYPEID_PLAYER)
+                    killer->CastSpell(killer, SPELL_TURKEY_TRACKER, true);
+            }
+        };
+
+        CreatureAI* GetAI(Creature* creature) const
+        {
+            return new npc_wild_turkeyAI(creature);
+        }
+};
+
 void AddSC_npcs_special()
 {
     new npc_air_force_bots();
@@ -2992,9 +3708,18 @@ void AddSC_npcs_special()
     new npc_wormhole();
     new npc_pet_trainer();
     new npc_locksmith();
+    new npc_tabard_vendor();
     new npc_experience();
     new npc_fire_elemental();
     new npc_earth_elemental();
     new npc_firework();
     new npc_spring_rabbit();
+    new npc_torch_tossing_bunny();
+    new npc_apple_trap_bunny();
+    new npc_keg_delivery();
+    new npc_bark_bunny();
+    new npc_brew_vendor();
+    new npc_dark_iron_herald();
+    new npc_dark_iron_guzzler();
+    new npc_wild_turkey();
 }
