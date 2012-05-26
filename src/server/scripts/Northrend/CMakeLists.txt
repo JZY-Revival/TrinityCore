@@ -177,6 +177,7 @@ set(scripts_STAT_SRCS
   Northrend/IcecrownCitadel/boss_sindragosa.cpp
   Northrend/IcecrownCitadel/boss_the_lich_king.cpp
   Northrend/zuldrak.cpp
+  Northrend/wintergrasp.cpp
   Northrend/icecrown.cpp
   Northrend/Gundrak/boss_slad_ran.cpp
   Northrend/Gundrak/instance_gundrak.cpp
@@ -188,6 +189,7 @@ set(scripts_STAT_SRCS
   Northrend/borean_tundra.cpp
   Northrend/howling_fjord.cpp
   Northrend/dalaran.cpp
+  Northrend/wintergrasp.cpp
   Northrend/argenttournament.cpp
   Northrend/DraktharonKeep/boss_trollgore.cpp
   Northrend/DraktharonKeep/instance_drak_tharon_keep.cpp

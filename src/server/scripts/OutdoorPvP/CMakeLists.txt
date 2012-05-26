@@ -1,4 +1,4 @@
-# Copyright (C) 2008-2012 TrinityCore <http://www.trinitycore.org/>
+# Copyright (C) 2008-2011 TrinityCore <http://www.trinitycore.org/>
 #
 # This file is free software; as a special exception the author gives
 # unlimited permission to copy and/or distribute it, with or without
@@ -10,6 +10,8 @@
 
 set(scripts_STAT_SRCS
   ${scripts_STAT_SRCS}
+  OutdoorPvP/OutdoorPvPWG.cpp
+  OutdoorPvP/OutdoorPvPWG.h
   OutdoorPvP/OutdoorPvPTF.cpp
   OutdoorPvP/OutdoorPvPSI.cpp
   OutdoorPvP/OutdoorPvPSI.h
@@ -18,6 +20,8 @@ set(scripts_STAT_SRCS
   OutdoorPvP/OutdoorPvPHP.cpp
   OutdoorPvP/OutdoorPvPTF.h
   OutdoorPvP/OutdoorPvPEP.h
+  OutdoorPvP/OutdoorPvPGH.cpp
+  OutdoorPvP/OutdoorPvPGH.h
   OutdoorPvP/OutdoorPvPEP.cpp
   OutdoorPvP/OutdoorPvPHP.h
   OutdoorPvP/OutdoorPvPZM.h

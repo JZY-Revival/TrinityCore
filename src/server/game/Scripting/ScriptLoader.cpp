@@ -505,6 +505,7 @@ void AddSC_storm_peaks();
 void AddSC_zuldrak();
 void AddSC_crystalsong_forest();
 void AddSC_isle_of_conquest();
+void AddSC_wintergrasp();
 void AddSC_Argen_Tournament();
 
 //outland
@@ -600,6 +601,8 @@ void AddSC_outdoorpvp_na();
 void AddSC_outdoorpvp_si();
 void AddSC_outdoorpvp_tf();
 void AddSC_outdoorpvp_zm();
+void AddSC_outdoorpvp_wg();
+void AddSC_outdoorpvp_gh();
 
 // player
 void AddSC_chat_log();
@@ -1216,6 +1219,8 @@ void AddNorthrendScripts()
     AddSC_zuldrak();
     AddSC_crystalsong_forest();
     AddSC_isle_of_conquest();
+    AddSC_wintergrasp();
+    AddSC_Argen_Tournament();
 #endif
 }
 
@@ -1228,6 +1233,8 @@ void AddOutdoorPvPScripts()
     AddSC_outdoorpvp_si();
     AddSC_outdoorpvp_tf();
     AddSC_outdoorpvp_zm();
+    AddSC_outdoorpvp_wg();
+    AddSC_outdoorpvp_gh();
 #endif
 }
 
